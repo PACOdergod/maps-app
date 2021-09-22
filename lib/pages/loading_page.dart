@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:mapa_app/helpers/helpers.dart';
-import 'package:mapa_app/pages/acess_gps_page.dart';
+import 'package:mapa_app/pages/access_gps_page.dart';
 import 'package:mapa_app/pages/mapa_page.dart';
 
 

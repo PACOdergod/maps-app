@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -61,8 +62,8 @@ class _AccessGPSPageState extends State<AccessGPSPage>
       final permisoGPS = await Permission.location.isGranted;
       final gpsActivo = await Geolocator.isLocationServiceEnabled();
       
-      if ( !permisoGPS ) return 'permisoGPS';
       if ( !gpsActivo ) return 'activarGPS';
+      if ( !permisoGPS ) return 'permisoGPS';
       else return 'listo';
   }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mapa_app/pages/acess_gps_page.dart';
+import 'package:mapa_app/pages/access_gps_page.dart';
 import 'package:mapa_app/pages/loading_page.dart';
 import 'package:mapa_app/pages/mapa_page.dart';
  
