@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:open_settings/open_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 
@@ -24,62 +26,121 @@ class _AccessGPSPageState extends State<AccessGPSPage>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state)async {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     if( state == AppLifecycleState.resumed ){
-      if ( await Permission.location.isGranted ) {
+      var res = await checkGPSAndLocation();
+      if ( res == 'listo' ) {
         Navigator.pushReplacementNamed(context, 'loading');
       }
+
+      else setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:[
+      body: Container(
+        padding: EdgeInsets.all(20),
+        child: FutureBuilder(
+          future: checkGPSAndLocation(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
 
-            Text('Es necesario el GPS para usar esta app',
-              style: TextStyle( color: Colors.black, fontSize: 18 ),
-            ),
+            if ( snapshot.data == 'activarGPS') return _activarGPS();
 
-            SizedBox(height: 10),
+            if ( snapshot.data == 'permisoGPS' ) return _accesoGPS();
 
-            MaterialButton(
-              child: Text('Solicitar acceso', 
-                style: TextStyle( color: Colors.white, fontSize: 19 ),
-              ),
-              color: Colors.black,
-              shape: StadiumBorder(),
-              elevation: 0,
-              splashColor: Colors.transparent,
-              onPressed: () async {
-                final status = await Permission.location.request();
-                this.accesoGPS(status);
-              }
-            ),
-
-          ],
-        )
+            return Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
     );
   }
 
-  void accesoGPS( PermissionStatus status){
+  Future<String> checkGPSAndLocation() async {
+      final permisoGPS = await Permission.location.isGranted;
+      final gpsActivo = await Geolocator.isLocationServiceEnabled();
+      
+      if ( !permisoGPS ) return 'permisoGPS';
+      if ( !gpsActivo ) return 'activarGPS';
+      else return 'listo';
+  }
 
-    switch( status ){
-      
-      case PermissionStatus.granted:
-        Navigator.pushReplacementNamed(context, 'mapa');
-        break;
-      
-      case PermissionStatus.limited:
-      case PermissionStatus.restricted:
-      case PermissionStatus.denied:
-      case PermissionStatus.permanentlyDenied:
-        openAppSettings();
-        break;
-    }
+}
+
+Widget _activarGPS()=> Access(
+  text: 'Debe activar el GPS',
+  buttonText: 'Activar GPS',
+  onPress: ()=> OpenSettings.openLocationSourceSetting()
+);
+
+
+Widget _accesoGPS()=> Access(
+  text: 'Debe dar permisos para usar el GPS', 
+  buttonText: 'Solicitar acceso', 
+  onPress: ()=> openAppSettings()
+);
+
+
+class Access extends StatelessWidget {
+  const Access({
+    Key? key, 
+    required this.text, 
+    required this.buttonText, 
+    required this.onPress
+  }) : super(key: key);
+
+  final String text;
+  final String buttonText;
+  final void Function() onPress;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children:[
+
+          Text( this.text,
+            textAlign: TextAlign.center,
+            style: TextStyle( color: Colors.black, fontSize: 19 ),
+          ),
+
+          SizedBox(height: 10),
+
+          AccesButton(
+            text: this.buttonText,
+            onPress: this.onPress
+          ),
+
+        ],
+      )
+    );
+  }
+}
+
+class AccesButton extends StatelessWidget {
+  const AccesButton({
+    Key? key, 
+    required this.text, 
+    required this.onPress,
+  }) : super(key: key);
+
+  final String text;
+  final void Function() onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      child: Text( this.text, 
+        style: TextStyle( color: Colors.white, fontSize: 15 ),
+      ),
+      color: Colors.black,
+      shape: StadiumBorder(),
+      elevation: 0,
+      splashColor: Colors.transparent,
+      onPressed: this.onPress
+    );
   }
 }
