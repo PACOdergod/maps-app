@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'package:mapa_app/blocs/mapa/mapa_bloc.dart';
 import 'package:mapa_app/blocs/ubication/ubication_bloc.dart';
+import 'package:mapa_app/widgets/btn_location.dart';
 
 
 class MapaPage extends StatefulWidget {
@@ -29,32 +32,36 @@ class _MapaPageState extends State<MapaPage> {
     return Scaffold(
       body: BlocBuilder<UbicationBloc, UbicationState>(
         builder: (context, state)=> coordenadas(state)
-      )
+      ),
+
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          BtnUbication()
+        ],
+      ),
     );
   }
-}
 
-coordenadas( UbicationState state ){
-  if ( state.ubicacion == null ) return Center(
-    child: Text('Calculando'),
-  );
+  coordenadas( UbicationState state ){
+    if ( state.ubicacion == null ) return Center(
+      child: Text('Calculando'),
+    );
 
-  // else return Center(
-  //   child: Text(
-  //     '${state.ubicacion?.latitude}, ${state.ubicacion?.longitude}',
-  //     style: TextStyle( fontSize: 20 ),
-  //   ),
-  // );
 
-  final _camaraPosition = new CameraPosition(
-    target: state.ubicacion!,
-    zoom: 15
-  );
+    final _camaraPosition = new CameraPosition(
+      target: state.ubicacion!,
+      zoom: 15
+    );
 
-  return GoogleMap(
-    initialCameraPosition: _camaraPosition,
-    compassEnabled: true,
-    myLocationEnabled: true,
-    myLocationButtonEnabled: true,
-  );
+    return GoogleMap(
+      initialCameraPosition: _camaraPosition,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: false,
+      myLocationEnabled: true,
+      onMapCreated: ( controller ){
+        BlocProvider.of<MapaBloc>(context).initMap(controller);
+      },
+    );
+  }
 }
