@@ -18,6 +18,10 @@
    <application
         android:label="mapa_app"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBHObsZsxfGO3lzPN8w7We-7DlpP5XlaZY"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
