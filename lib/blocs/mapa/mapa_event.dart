@@ -11,3 +11,5 @@ class OnLocationUpdate extends MapaEvent {
 }
 
 class OnMarcarRecorrido extends MapaEvent {}
+
+class Onfollow extends MapaEvent {}

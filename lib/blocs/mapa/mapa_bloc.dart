@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart' show Colors;
 import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapa_app/blocs/ubication/ubication_bloc.dart';
 import 'package:meta/meta.dart';
 
 import 'package:mapa_app/themes/my_map_theme.dart';
@@ -42,31 +44,42 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
   Stream<MapaState> mapEventToState(MapaEvent event) async* {
     if ( event is OnMapaListo ) yield state.copyWith(mapaListo: true);
 
-    else if ( event is OnLocationUpdate ) {
-      List<LatLng> points = [ ..._miRuta.points, event.newLocation ];
-      this._miRuta = this._miRuta.copyWith( pointsParam: points );
+    else if (event is OnLocationUpdate) yield _onLocationUpdate(event);
 
-      final currentPolylines = state.polylines;
-      currentPolylines['mi_ruta'] = this._miRuta;
+    else if (event is OnMarcarRecorrido) yield _onMarcarRecorrido(event);
 
-      yield state.copyWith( polylines: currentPolylines );
+    else if (event is Onfollow){
+      yield state.copyWith( follow: !state.follow );
+    }
+  }
+
+
+  MapaState _onLocationUpdate( OnLocationUpdate event ){
+
+    if ( state.follow ) this.moverCamara( event.newLocation );
+    
+    List<LatLng> points = [ ..._miRuta.points, event.newLocation ];
+    this._miRuta = this._miRuta.copyWith( pointsParam: points );
+
+    final currentPolylines = state.polylines;
+    currentPolylines['mi_ruta'] = this._miRuta;
+
+    return state.copyWith( polylines: currentPolylines );
+  }
+
+  MapaState _onMarcarRecorrido( OnMarcarRecorrido event ){
+    if ( !state.dibujarRecorrido ) {
+      this._miRuta = this._miRuta.copyWith( colorParam: Colors.black );
+    } else {
+      this._miRuta = this._miRuta.copyWith( colorParam: Colors.transparent );
     }
 
-    else if ( event is OnMarcarRecorrido ) {
+    final currentPolilyne = state.polylines;
+    currentPolilyne['mi_ruta'] = this._miRuta;
 
-      if ( !state.dibujarRecorrido ) {
-        this._miRuta = this._miRuta.copyWith( colorParam: Colors.black );
-      } else {
-        this._miRuta = this._miRuta.copyWith( colorParam: Colors.transparent );
-      }
-
-      final currentPolilyne = state.polylines;
-      currentPolilyne['mi_ruta'] = this._miRuta;
-
-      yield state.copyWith( 
-        polylines: currentPolilyne,
-        dibujarRecorrido: !state.dibujarRecorrido
-      );
-    }
+    return state.copyWith( 
+      polylines: currentPolilyne,
+      dibujarRecorrido: !state.dibujarRecorrido
+    );
   }
 }
