@@ -48,20 +48,22 @@ class _MapaPageState extends State<MapaPage> {
       child: Text('Calculando'),
     );
 
-
     final _camaraPosition = new CameraPosition(
       target: state.ubicacion!,
       zoom: 15
     );
+
+    final mapaBloc = BlocProvider.of<MapaBloc>(context);
+
+    mapaBloc.add( OnLocationUpdate(state.ubicacion!) );
 
     return GoogleMap(
       initialCameraPosition: _camaraPosition,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       myLocationEnabled: true,
-      onMapCreated: ( controller ){
-        BlocProvider.of<MapaBloc>(context).initMap(controller);
-      },
+      onMapCreated: mapaBloc.initMap,
+      polylines: mapaBloc.state.polylines.values.toSet(),
     );
   }
 }
