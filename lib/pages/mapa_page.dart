@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mapa_app/blocs/mapa/mapa_bloc.dart';
 import 'package:mapa_app/blocs/ubication/ubication_bloc.dart';
 import 'package:mapa_app/widgets/btn_location.dart';
+import 'package:mapa_app/widgets/btn_route.dart';
 
 
 class MapaPage extends StatefulWidget {
@@ -37,7 +38,9 @@ class _MapaPageState extends State<MapaPage> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          BtnUbication()
+          BtnUbication(),
+          SizedBox(height: 10),
+          BtnRoute()
         ],
       ),
     );
