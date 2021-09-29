@@ -4,7 +4,6 @@ import 'package:flutter/material.dart' show Colors;
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mapa_app/blocs/ubication/ubication_bloc.dart';
 import 'package:meta/meta.dart';
 
 import 'package:mapa_app/themes/my_map_theme.dart';
@@ -17,6 +16,7 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
 
   //* Controlador 
   late GoogleMapController _controller;
+  bool mapaIniciado = false;
 
   //* Polyline
   Polyline _miRuta = new Polyline(
@@ -29,13 +29,18 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     if( state.mapaListo ) return;
 
     this._controller = controller;
+    this.mapaIniciado = true;
 
     this._controller.setMapStyle( json.encode(myMapTheme) );
 
     add( OnMapaListo() );
   }
 
-  void moverCamara( LatLng destino ){
+  void moverCamara( LatLng destino ) async {
+
+    //TODO hecer que se ejecute la funcion cuando se cambie mapaIniciado
+    if ( !mapaIniciado ) await Future.delayed(Duration(seconds: 8));
+
     final camaraUpdate = CameraUpdate.newLatLng( destino );
     this._controller.animateCamera( camaraUpdate );
   }

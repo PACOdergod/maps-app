@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+part of 'location_buttons.dart';
 
-import 'package:mapa_app/blocs/mapa/mapa_bloc.dart';
 
 class BtnRoute extends StatelessWidget {
   @override
