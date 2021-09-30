@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:polyline_do/polyline_do.dart' as Poly;
 
@@ -64,10 +65,20 @@ class MarcadorManual extends StatelessWidget {
     final duration = drivingResp.routes[0].duration;
     final distance = drivingResp.routes[0].distance;
 
-    final point = Poly.Polyline.Decode(
+    final points = Poly.Polyline.Decode(
       encodedString: geometry, 
       precision: 6
     ).decodedCoords;
 
+    final List<LatLng> coords = points.map(
+      (p) => LatLng(p.first, p.last)
+    ).toList();
+
+    BlocProvider.of<MapaBloc>(context).add( OnCrearRuta(
+      coordenadas: coords,
+      distancia: distance,
+      duracion: duration
+    ));
   }
+
 }

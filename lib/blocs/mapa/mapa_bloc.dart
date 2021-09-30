@@ -25,6 +25,12 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     color: Colors.black
   );
 
+  Polyline _miRutaDestino = new Polyline(
+    polylineId: PolylineId('mi_ruta_destino'),
+    width: 3,
+    color: Colors.black
+  );
+
   void initMap( GoogleMapController controller ){
     if( state.mapaListo ) return;
 
@@ -55,6 +61,20 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
 
     else if (event is Onfollow){
       yield state.copyWith( follow: !state.follow );
+    }
+
+    else if (event is OnCrearRuta){
+      this._miRutaDestino = _miRutaDestino.copyWith(
+        pointsParam: event.coordenadas
+      );
+
+      final currentPolylines = state.polylines;
+      currentPolylines['mi_ruta_destino'] = this._miRutaDestino;
+
+      yield state.copyWith(
+        polylines: currentPolylines,
+        // TODO marcadores
+      );
     }
   }
 

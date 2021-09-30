@@ -13,3 +13,15 @@ class OnLocationUpdate extends MapaEvent {
 class OnMarcarRecorrido extends MapaEvent {}
 
 class Onfollow extends MapaEvent {}
+
+class OnCrearRuta extends MapaEvent {
+  final List<LatLng> coordenadas;
+  final double distancia;
+  final double duracion;
+
+  OnCrearRuta({
+    required this.coordenadas, 
+    required this.distancia, 
+    required this.duracion
+  });
+}
