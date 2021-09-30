@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapa_app/helpers/show_loading.dart';
 
 import 'package:polyline_do/polyline_do.dart' as Poly;
 
@@ -55,6 +56,9 @@ class MarcadorManual extends StatelessWidget {
   }
 
   calcularDestino( BuildContext context ) async {
+
+    showLoading(context);
+
     final inicio = BlocProvider.of<UbicationBloc>(context).state.ubicacion;
     final fin = BlocProvider.of<MapaBloc>(context).posicionCentral;
     if ( inicio == null || fin == null) return;
@@ -79,6 +83,8 @@ class MarcadorManual extends StatelessWidget {
       distancia: distance,
       duracion: duration
     ));
+
+    Navigator.of(context).pop();
   }
 
 }
