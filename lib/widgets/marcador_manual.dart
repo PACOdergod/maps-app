@@ -56,12 +56,11 @@ class MarcadorManual extends StatelessWidget {
   }
 
   calcularDestino( BuildContext context ) async {
-
-    showLoading(context);
-
     final inicio = BlocProvider.of<UbicationBloc>(context).state.ubicacion;
     final fin = BlocProvider.of<MapaBloc>(context).posicionCentral;
     if ( inicio == null || fin == null) return;
+
+    showLoading(context);
 
     final drivingResp = await TraficService().getCoordsInicioFin(inicio, fin);
 
@@ -84,6 +83,7 @@ class MarcadorManual extends StatelessWidget {
       duracion: duration
     ));
 
+    BlocProvider.of<BusquedaBloc>(context).add(OnDesactivarMarcadorManual());
     Navigator.of(context).pop();
   }
 
