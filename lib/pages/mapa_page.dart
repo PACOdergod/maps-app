@@ -54,6 +54,9 @@ class _MapaPageState extends State<MapaPage> {
                 myLocationEnabled: true,
                 onMapCreated: mapaBloc.initMap,
                 polylines: mapaBloc.state.polylines.values.toSet(),
+                onCameraMove: ( cameraPosition ){
+                  mapaBloc.posicionCentral = cameraPosition.target;
+                },
               ),
 
               BlocBuilder<BusquedaBloc, BusquedaState>(

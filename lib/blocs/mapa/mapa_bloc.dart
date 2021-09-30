@@ -87,4 +87,6 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
       dibujarRecorrido: !state.dibujarRecorrido
     );
   }
+
+  LatLng posicionCentral = LatLng(0, 0);
 }
