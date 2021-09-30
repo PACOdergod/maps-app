@@ -88,5 +88,5 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     );
   }
 
-  LatLng posicionCentral = LatLng(0, 0);
+  LatLng? posicionCentral;
 }
