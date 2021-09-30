@@ -44,7 +44,7 @@ class _MapaPageState extends State<MapaPage> {
 
           return Stack(
             children: [
-              
+
               BlocBuilder<MapaBloc, MapaState>(
                 builder: (context, state) {
                   return GoogleMap(

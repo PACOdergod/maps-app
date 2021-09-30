@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mapa_app/models/DrivingResponse.dart';
+import 'package:mapa_app/blocs/ubication/ubication_bloc.dart';
+import 'package:mapa_app/models/driving_response.dart';
 
 class TraficService {
   
@@ -9,7 +11,8 @@ class TraficService {
   factory TraficService()=> _instance;
 
   final _dio = new Dio();
-  final _baseUrl = 'https://api.mapbox.com/directions/v5';
+  final _baseDir = 'https://api.mapbox.com/directions/v5';
+  final _baseGeo = 'https://api.mapbox.com/geocodin/v5';
   final _apiKey = 'pk.eyJ1IjoicGFjb2Rlcmdvc2giLCJhIjoiY2t1NG1lemRjNHNkbDJ4cG1mem5obDZ4MyJ9.2r0aWVJE9-KU7mdKqX4Vhg';
 
 
@@ -17,7 +20,7 @@ class TraficService {
 
     final coordString = 
       '${inicio.longitude},${inicio.latitude};${fin.longitude},${fin.latitude}';
-    final url = '$_baseUrl/mapbox/driving/$coordString';
+    final url = '$_baseDir/mapbox/driving/$coordString';
 
     final resp = await _dio.get( url, queryParameters: {
       'alternatives' : 'false',
@@ -30,6 +33,19 @@ class TraficService {
     final data = DrivingResponse.fromMap(resp.data);
 
     return data;
+  }
+
+  Future getSearchResult( String search, LatLng location ) async {
+    final url = '$_baseGeo/mapbox.places/$search.json';
+
+    final resp = await _dio.get(url, queryParameters: {
+      'access_token' : _apiKey,
+      'autocomplete' : 'true',
+      'proximity'    : '${location.latitude},${location.longitude}',
+      'language'     : 'es'
+    });
+
+    
   }
 
 }
