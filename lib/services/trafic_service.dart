@@ -12,7 +12,7 @@ class TraficService {
 
   final _dio = new Dio();
   final _baseDir = 'https://api.mapbox.com/directions/v5';
-  final _baseGeo = 'https://api.mapbox.com/geocodin/v5';
+  final _baseGeo = 'https://api.mapbox.com/geocoding/v5/mapbox.places';
   final _apiKey = 'pk.eyJ1IjoicGFjb2Rlcmdvc2giLCJhIjoiY2t1NG1lemRjNHNkbDJ4cG1mem5obDZ4MyJ9.2r0aWVJE9-KU7mdKqX4Vhg';
 
 
@@ -36,16 +36,20 @@ class TraficService {
   }
 
   Future getSearchResult( String search, LatLng location ) async {
-    final url = '$_baseGeo/mapbox.places/$search.json';
 
-    final resp = await _dio.get(url, queryParameters: {
-      'access_token' : _apiKey,
-      'autocomplete' : 'true',
-      'proximity'    : '${location.latitude},${location.longitude}',
-      'language'     : 'es'
-    });
+    // final loc = LatLng(37.7787178,-122.2808506);
+    final url = '$_baseGeo/$search.json';
 
+    final resp = await _dio.get( url,
+      queryParameters: {
+        'access_token' : _apiKey,
+        'autocomplete' : 'true',
+        'proximity'    : '${location.longitude},${location.latitude}',
+        'language'     : 'es'
+      }
+    );
     
+    print(resp.data);
   }
 
 }
