@@ -1,8 +1,17 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapa_app/blocs/mapa/mapa_bloc.dart';
+import 'package:mapa_app/helpers/show_loading.dart';
+
+import 'package:polyline_do/polyline_do.dart' as Poly;
+
 import 'package:mapa_app/blocs/busqueda/busqueda_bloc.dart';
+import 'package:mapa_app/blocs/ubication/ubication_bloc.dart';
 import 'package:mapa_app/models/search_result.dart';
 import 'package:mapa_app/search/search_destino.dart';
+import 'package:mapa_app/services/trafic_service.dart';
 
 class Searchbar extends StatelessWidget {
   @override
@@ -37,13 +46,41 @@ class Searchbar extends StatelessWidget {
     );
   }
 
-  void retornoBusquedo( SearchResult? result, BuildContext context ){
+  void retornoBusquedo( SearchResult? result, BuildContext context ) async {
     if ( result == null ) return;
     if ( result.cancelo ) return;
     if ( result.manual == null ) return;
     if ( result.manual! ){
       BlocProvider.of<BusquedaBloc>(context).add(OnActivarMarcadorManual());
       return;
+    }
+
+    // calcular la ruta cuando el result tenfa un destino
+    if ( result.destino != null ) {
+
+      showLoading(context);
+
+      final inicio = BlocProvider.of<UbicationBloc>(context).state.ubicacion;
+      final destino = result.destino;
+
+      final drivingResponse = await TraficService()
+                              .getCoordsInicioFin(inicio!, destino!);
+
+      final geometry = drivingResponse.routes[0].geometry;
+      final duration = drivingResponse.routes[0].duration;
+      final distance = drivingResponse.routes[0].distance;
+
+      final points = Poly.Polyline.Decode(encodedString: geometry, precision: 6);
+
+      final List<LatLng> coordenadas = points.decodedCoords.map(
+        (p) => LatLng(p.first, p.last) 
+      ).toList();
+
+      BlocProvider.of<MapaBloc>(context).add( OnCrearRuta(
+        coordenadas: coordenadas, distancia: distance, duracion: duration
+      ));
+
+      Navigator.pop(context);
     }
   }
 }
