@@ -29,11 +29,7 @@ class FollowAvatar extends StatelessWidget {
             : Icons.accessibility_new, 
           color: Colors.black,
         ),
-        onPressed: () {
-          final location = BlocProvider.of<UbicationBloc>(context).state.ubicacion;
-          TraficService().getSearchResult('san francisco', location??LatLng(0, 0));
-          // mapaBloc.add( Onfollow() );
-        },
+        onPressed: ()=> mapaBloc.add( Onfollow() ),
       ),
     );
 
