@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapa_app/blocs/busqueda/busqueda_bloc.dart';
 
 import 'package:mapa_app/blocs/ubication/ubication_bloc.dart';
 import 'package:mapa_app/models/search_response.dart';
@@ -40,16 +41,28 @@ class SearchDestino extends SearchDelegate<SearchResult>{
   @override
   Widget buildSuggestions(BuildContext context) {
 
+    final busquedas = BlocProvider.of<BusquedaBloc>(context).state.busquedas;
+
     if ( this.query.length == 0) return ListView(
       children: [
         ListTile(
           leading: Icon(Icons.location_on),
-          title: Text('colocar ubicacion manualmente'),
+          title: Text('Colocar ubicacion manualmente'),
           onTap: ()=>  this.close(context, SearchResult(
             cancelo: false,
             manual: true
           )),
-        )
+        ),
+
+        ...busquedas.map(( b ) => ListTile(
+          leading: Icon( Icons.history ),
+          title: Text( b.nombreDestino.toString() ),
+          subtitle: Text( b.descripcion.toString() ),
+          onTap: (){ 
+            this.close(context, b.copyWith( agregarBusqueda: false )); 
+          },
+        ))
+
       ],
     );
 

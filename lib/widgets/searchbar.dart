@@ -24,7 +24,9 @@ class Searchbar extends StatelessWidget {
         child: GestureDetector(
           onTap: () async {
             final result = await showSearch<SearchResult>(
-              context: context, delegate: SearchDestino());
+              context: context, 
+              delegate: SearchDestino(),
+            );
             retornoBusquedo(result, context);
           },
           child: Container(
@@ -81,6 +83,11 @@ class Searchbar extends StatelessWidget {
       ));
 
       Navigator.pop(context);
+
+
+      // agregar el historial
+      if ( result.agregarBusqueda )
+      BlocProvider.of<BusquedaBloc>(context).add( OnAgregarBusqueda( result ));
     }
   }
 }
