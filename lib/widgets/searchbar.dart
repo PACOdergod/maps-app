@@ -32,7 +32,8 @@ class Searchbar extends StatelessWidget {
           child: Container(
             width: double.infinity,
             child: Text('donde quieres ir', style: TextStyle(fontSize:20)),
-            padding: EdgeInsets.all(10),
+            alignment: Alignment.center,
+            height: 45,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(100),

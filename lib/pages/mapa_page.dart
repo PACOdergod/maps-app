@@ -30,42 +30,51 @@ class _MapaPageState extends State<MapaPage> {
     return Scaffold(
       body: BlocBuilder<UbicationBloc, UbicationState>(
         builder: (context, state) {
-          if (state.ubicacion == null)
-            return Center(
-              child: Text('Calculando'),
-            );
 
-          final _camaraPosition =
-              new CameraPosition(target: state.ubicacion!, zoom: 15);
+          return ( state.ubicacion == null)
+          ? Center( child: Text('Calculando') )
+          : _Mapa(state);
 
-          final mapaBloc = BlocProvider.of<MapaBloc>(context);
-
-          mapaBloc.add(OnLocationUpdate(state.ubicacion!));
-
-          return Stack(
-            children: [
-
-              BlocBuilder<MapaBloc, MapaState>(
-                builder: (context, state) {
-                  return GoogleMap(
-                    initialCameraPosition: _camaraPosition,
-                    myLocationButtonEnabled: false,
-                    zoomControlsEnabled: false,
-                    myLocationEnabled: true,
-                    onMapCreated: mapaBloc.initMap,
-                    polylines: mapaBloc.state.polylines.values.toSet(),
-                    onCameraMove: (cameraPosition) {
-                      mapaBloc.posicionCentral = cameraPosition.target;
-                    },
-                  );
-                },
-              ),
-
-              Marcadores()
-            ],
-          );
         },
       ),
+    );
+  }
+}
+
+class _Mapa extends StatelessWidget {
+  const _Mapa( this.state );
+
+  final UbicationState state;
+
+  @override
+  Widget build(BuildContext context) {
+
+    final _camaraPosition = CameraPosition(target: state.ubicacion!, zoom: 15);
+    final mapaBloc = BlocProvider.of<MapaBloc>(context);
+    mapaBloc.add(OnLocationUpdate(state.ubicacion!));
+
+    return Stack(
+      children: [
+
+        BlocBuilder<MapaBloc, MapaState>(
+          builder: (context, state) {
+            return GoogleMap(
+              initialCameraPosition: _camaraPosition,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              myLocationEnabled: true,
+              onMapCreated: mapaBloc.initMap,
+              polylines: mapaBloc.state.polylines.values.toSet(),
+              onCameraMove: (cameraPosition) {
+                mapaBloc.posicionCentral = cameraPosition.target;
+              },
+            );
+          },
+        ),
+
+        Marcadores()
+
+      ],
     );
   }
 }
