@@ -59,22 +59,10 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
 
     else if (event is OnMarcarRecorrido) yield _onMarcarRecorrido(event);
 
+    else if (event is OnCrearRuta) yield _onCrearRuta(event);
+
     else if (event is Onfollow){
       yield state.copyWith( follow: !state.follow );
-    }
-
-    else if (event is OnCrearRuta){
-      this._miRutaDestino = _miRutaDestino.copyWith(
-        pointsParam: event.coordenadas
-      );
-
-      final currentPolylines = state.polylines;
-      currentPolylines['mi_ruta_destino'] = this._miRutaDestino;
-
-      yield state.copyWith(
-        polylines: currentPolylines,
-        // TODO marcadores
-      );
     }
   }
 
@@ -105,6 +93,29 @@ class MapaBloc extends Bloc<MapaEvent, MapaState> {
     return state.copyWith( 
       polylines: currentPolilyne,
       dibujarRecorrido: !state.dibujarRecorrido
+    );
+  }
+
+  MapaState _onCrearRuta( OnCrearRuta event ){
+    this._miRutaDestino = _miRutaDestino.copyWith(
+      pointsParam: event.coordenadas
+    );
+
+    final currentPolylines = state.polylines;
+    currentPolylines['mi_ruta_destino'] = this._miRutaDestino;
+
+    //*Marcadores
+    final markerFinal = Marker(
+      markerId: MarkerId('final'),
+      position: event.coordenadas.last,
+    );
+
+    var newMarkers = { ...state.markets };
+    newMarkers['final'] = markerFinal;
+
+    return state.copyWith(
+      polylines: currentPolylines,
+      markets: newMarkers
     );
   }
 

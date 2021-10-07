@@ -65,6 +65,7 @@ class _Mapa extends StatelessWidget {
               myLocationEnabled: true,
               onMapCreated: mapaBloc.initMap,
               polylines: mapaBloc.state.polylines.values.toSet(),
+              markers: mapaBloc.state.markets.values.toSet(),
               onCameraMove: (cameraPosition) {
                 mapaBloc.posicionCentral = cameraPosition.target;
               },
